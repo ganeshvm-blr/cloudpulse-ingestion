@@ -102,42 +102,61 @@
   <div class="card">
     <h2>Problem</h2>
     <p>
-      AWS Lambda logs are fragmented, unstructured, and distributed across multiple log streams.
-      This makes it difficult to compute reliable system-level metrics such as latency distributions.
+      AWS Lambda logs are fragmented and unstructured, making it difficult to compute reliable metrics like latency distributions.
     </p>
   </div>
 
   <div class="card">
     <h2>Solution</h2>
     <p>
-      CloudPulse converts every Lambda invocation into a structured event that can be queried and analyzed deterministically.
+      CloudPulse converts every Lambda invocation into a structured event for deterministic analytics.
     </p>
   </div>
 
   <div class="card">
-    <h2>Architecture (Event-Driven Pipeline)</h2>
+    <h2>Why This Project Stands Out</h2>
+    <ul>
+      <li>Event-driven observability system design</li>
+      <li>Real-world AWS serverless architecture</li>
+      <li>Time-series data modeling in DynamoDB</li>
+      <li>Separation of ingestion and analytics layers</li>
+      <li>Deterministic metrics instead of log parsing</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Architecture</h2>
 
     <div class="diagram">
-Lambda Execution
-   ↓
-CloudWatch Logs
-   ↓
-Ingestion Lambda (log transformer)
-   ↓
-DynamoDB (CloudPulseEvents)
-   ↓
-Node.js CLI Analytics Engine
-   ↓
-p50 / p95 / p99 Computation
+┌────────────────────┐
+│  AWS Lambda        │
+└────────┬───────────┘
+         │ logs
+         ↓
+┌────────────────────┐
+│ CloudWatch Logs    │
+└────────┬───────────┘
+         │ stream
+         ↓
+┌────────────────────┐
+│ Ingestion Lambda   │
+└────────┬───────────┘
+         │ structured events
+         ↓
+┌────────────────────┐
+│ DynamoDB           │
+└────────┬───────────┘
+         │ query
+         ↓
+┌────────────────────┐
+│ CLI Analytics      │
+└────────────────────┘
     </div>
   </div>
 
   <div class="card">
-    <h2>Core Design Principle</h2>
+    <h2>Key Design Principle</h2>
     <p><strong>One Lambda invocation = One structured metric record</strong></p>
-    <p>
-      This removes log ambiguity and ensures deterministic observability.
-    </p>
   </div>
 
   <div class="card">
@@ -156,40 +175,37 @@ p50 / p95 / p99 Computation
   </div>
 
   <div class="card">
-    <h2>What Makes This Important</h2>
+    <h2>Interview Explanation</h2>
+    <p>
+      CloudPulse is a simplified observability pipeline similar to Datadog-style systems.
+    </p>
     <ul>
-      <li>Moves from log-based → event-based observability</li>
-      <li>Removes ambiguity in metric generation</li>
-      <li>Enables deterministic analytics</li>
-      <li>Aligns with real-world systems like Datadog & OpenTelemetry</li>
+      <li>Lambda generates logs</li>
+      <li>CloudWatch streams logs</li>
+      <li>Ingestion Lambda transforms data</li>
+      <li>DynamoDB stores events</li>
+      <li>CLI computes percentiles</li>
     </ul>
-  </div>
-
-  <div class="card">
-    <h2>Core Features</h2>
-    <span class="tag">Event-driven ingestion</span>
-    <span class="tag">Structured metrics</span>
-    <span class="tag">CLI analytics engine</span>
-    <span class="tag">Latency percentiles</span>
-    <span class="tag">Serverless architecture</span>
-  </div>
-
-  <div class="card">
-    <h2>Tradeoffs</h2>
-    <ul>
-      <li>No real-time streaming layer (no Kinesis)</li>
-      <li>CLI instead of dashboards</li>
-      <li>Not optimized for high-scale production workloads</li>
-    </ul>
+    <p><strong>Key idea:</strong> structured events > raw logs</p>
   </div>
 
   <div class="card">
     <h2>Scaling Plan</h2>
     <ul>
       <li>Add Kinesis ingestion buffer</li>
-      <li>Add pre-aggregation layer for metrics</li>
-      <li>Separate hot vs cold storage paths</li>
-      <li>Introduce visualization layer (Grafana / QuickSight)</li>
+      <li>Add pre-aggregation layer</li>
+      <li>Split hot vs cold storage</li>
+      <li>Add dashboard layer (Grafana / QuickSight)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Resume Impact</h2>
+    <ul>
+      <li>Built AWS serverless observability pipeline</li>
+      <li>Designed DynamoDB time-series schema</li>
+      <li>Built CLI analytics engine (p50/p95/p99)</li>
+      <li>Eliminated log parsing via structured events</li>
     </ul>
   </div>
 
@@ -211,7 +227,7 @@ node cloudpulse-cli/index.js stats /aws/lambda/&lt;function-name&gt;
 </div>
 
 <footer>
-  CloudPulse — Observability Engineering Project • Built for system design mastery
+  CloudPulse — Observability Engineering Project
 </footer>
 
 </body>
