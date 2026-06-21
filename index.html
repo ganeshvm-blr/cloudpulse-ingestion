@@ -1,10 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CloudPulse — AWS Observability System</title>
-
-  <meta name="description" content="CloudPulse is a lightweight AWS-native observability system built with Lambda, DynamoDB, and event-driven ingestion pipelines." />
-  <meta name="theme-color" content="#0b0f19" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CloudPulse — Observability System</title>
 
   <style>
     body {
@@ -12,83 +11,157 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
       background: #0b0f19;
       color: #e6e6e6;
+      line-height: 1.6;
     }
+
     header {
-      padding: 60px 40px;
-      background: linear-gradient(135deg, #1a1f2e, #0b0f19);
+      padding: 70px 40px;
+      background: linear-gradient(135deg, #111827, #0b0f19);
     }
+
     h1 {
-      font-size: 48px;
-      margin: 0;
+      font-size: 44px;
+      margin-bottom: 10px;
       color: #7dd3fc;
     }
-    p {
-      font-size: 18px;
-      max-width: 700px;
-      line-height: 1.6;
-      color: #cbd5e1;
+
+    h2 {
+      color: #93c5fd;
+      margin-top: 40px;
     }
+
     .container {
       padding: 40px;
+      max-width: 1000px;
+      margin: auto;
     }
+
     .card {
       background: #111827;
       padding: 20px;
-      margin-top: 20px;
       border-radius: 12px;
+      margin-top: 20px;
       border: 1px solid #1f2937;
     }
+
     .tag {
       display: inline-block;
       background: #1e293b;
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 999px;
       font-size: 12px;
-      margin-right: 6px;
+      margin: 4px;
       color: #93c5fd;
+    }
+
+    code {
+      background: #0f172a;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #a5b4fc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: #64748b;
     }
   </style>
 </head>
+
 <body>
 
 <header>
   <h1>CloudPulse</h1>
+  <p><strong>Lightweight AWS Observability System</strong></p>
   <p>
-    AWS-native observability system for real-time ingestion, processing, and analytics of cloud telemetry data.
-  </p>
-  <p>
-    Built on serverless architecture using Lambda, DynamoDB, and event-driven pipelines designed for scale, resilience, and low operational overhead.
+    A mini Datadog-style pipeline that converts AWS Lambda execution logs into structured metrics and computes latency percentiles (p50, p95, p99).
   </p>
 </header>
+
 <div class="container">
 
   <div class="card">
-    <h2>System Overview</h2>
+    <h2>Problem</h2>
     <p>
-      CloudPulse is a serverless observability pipeline built on AWS.
-      It ingests logs and events, processes them through Lambda, and stores structured data in DynamoDB for fast querying and analytics.
+      AWS Lambda logs are unstructured and scattered across multiple log lines,
+      making it difficult to compute reliable metrics like latency distributions.
     </p>
   </div>
 
   <div class="card">
-    <h2>Core Architecture</h2>
+    <h2>Architecture</h2>
     <p>
-      Ingestion Layer → AWS Lambda → DynamoDB → Query APIs → Visualization Layer
+      Lambda → CloudWatch Logs → Ingestion Lambda → DynamoDB → CLI Analytics Engine
     </p>
   </div>
 
   <div class="card">
-    <h2>Design Principles</h2>
-    <span class="tag">Serverless-first</span>
-    <span class="tag">Event-driven</span>
-    <span class="tag">Low-latency</span>
-    <span class="tag">Cost-efficient</span>
+    <h2>Key Design Principle</h2>
+    <p>
+      <strong>One Lambda invocation = One structured metric record</strong>
+    </p>
+    <p>
+      This eliminates log ambiguity and makes metrics deterministic.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Data Model (DynamoDB)</h2>
+    <pre>
+{
+  pk: "SERVICE#lambda-name",
+  sk: "TIME#timestamp#requestId",
+  durationMs,
+  billedMs,
+  memoryMb,
+  requestId,
+  timestamp
+}
+    </pre>
+  </div>
+
+  <div class="card">
+    <h2>Core Features</h2>
+    <span class="tag">Event-driven ingestion</span>
+    <span class="tag">Structured metrics</span>
+    <span class="tag">CLI analytics engine</span>
+    <span class="tag">Latency percentiles</span>
+    <span class="tag">Serverless architecture</span>
+  </div>
+
+  <div class="card">
+    <h2>Tradeoffs</h2>
+    <ul>
+      <li>No real-time streaming (Kinesis missing)</li>
+      <li>No dashboards (CLI-based only)</li>
+      <li>Limited scalability for large workloads</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Scaling Plan</h2>
+    <ul>
+      <li>Add Kinesis for ingestion buffering</li>
+      <li>Add pre-aggregation layer</li>
+      <li>Split hot vs cold storage</li>
+      <li>Introduce dashboard (Grafana / QuickSight)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Tech Stack</h2>
+    <span class="tag">AWS Lambda</span>
+    <span class="tag">CloudWatch Logs</span>
+    <span class="tag">DynamoDB</span>
+    <span class="tag">Node.js</span>
   </div>
 
 </div>
-<footer style="text-align:center; padding:40px; color:#64748b;">
-  <p>CloudPulse — AWS Observability Platform</p>
-  <p>Built on serverless architecture: Lambda • DynamoDB • Event-driven ingestion</p>
+
+<footer>
+  CloudPulse — Observability & Metrics Pipeline • Built for system design learning
 </footer>
+
 </body>
 </html>
