@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CloudPulse — Observability System</title>
+  <title>CloudPulse — AWS Observability System</title>
 
   <style>
     body {
@@ -15,19 +15,27 @@
     }
 
     header {
-      padding: 70px 40px;
+      padding: 80px 40px 40px;
       background: linear-gradient(135deg, #111827, #0b0f19);
+      border-bottom: 1px solid #1f2937;
     }
 
     h1 {
-      font-size: 44px;
-      margin-bottom: 10px;
+      font-size: 46px;
+      margin: 0;
       color: #7dd3fc;
     }
 
     h2 {
       color: #93c5fd;
       margin-top: 40px;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      max-width: 900px;
+      margin-top: 10px;
+      font-size: 18px;
     }
 
     .container {
@@ -38,9 +46,9 @@
 
     .card {
       background: #111827;
-      padding: 20px;
+      padding: 22px;
       border-radius: 12px;
-      margin-top: 20px;
+      margin-top: 18px;
       border: 1px solid #1f2937;
     }
 
@@ -54,17 +62,28 @@
       color: #93c5fd;
     }
 
-    code {
+    pre {
       background: #0f172a;
-      padding: 2px 6px;
-      border-radius: 6px;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
       color: #a5b4fc;
+    }
+
+    .diagram {
+      font-family: monospace;
+      color: #a5b4fc;
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
     }
 
     footer {
       text-align: center;
-      padding: 40px;
+      padding: 50px;
       color: #64748b;
+      border-top: 1px solid #1f2937;
+      margin-top: 40px;
     }
   </style>
 </head>
@@ -73,10 +92,9 @@
 
 <header>
   <h1>CloudPulse</h1>
-  <p><strong>Lightweight AWS Observability System</strong></p>
-  <p>
-    A mini Datadog-style pipeline that converts AWS Lambda execution logs into structured metrics and computes latency percentiles (p50, p95, p99).
-  </p>
+  <div class="subtitle">
+    Lightweight AWS-native observability system that transforms Lambda execution logs into structured metrics and computes latency percentiles (p50, p95, p99).
+  </div>
 </header>
 
 <div class="container">
@@ -84,25 +102,41 @@
   <div class="card">
     <h2>Problem</h2>
     <p>
-      AWS Lambda logs are unstructured and scattered across multiple log lines,
-      making it difficult to compute reliable metrics like latency distributions.
+      AWS Lambda logs are fragmented, unstructured, and distributed across multiple log streams.
+      This makes it difficult to compute reliable system-level metrics such as latency distributions.
     </p>
   </div>
 
   <div class="card">
-    <h2>Architecture</h2>
+    <h2>Solution</h2>
     <p>
-      Lambda → CloudWatch Logs → Ingestion Lambda → DynamoDB → CLI Analytics Engine
+      CloudPulse converts every Lambda invocation into a structured event that can be queried and analyzed deterministically.
     </p>
   </div>
 
   <div class="card">
-    <h2>Key Design Principle</h2>
+    <h2>Architecture (Event-Driven Pipeline)</h2>
+
+    <div class="diagram">
+Lambda Execution
+   ↓
+CloudWatch Logs
+   ↓
+Ingestion Lambda (log transformer)
+   ↓
+DynamoDB (CloudPulseEvents)
+   ↓
+Node.js CLI Analytics Engine
+   ↓
+p50 / p95 / p99 Computation
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Core Design Principle</h2>
+    <p><strong>One Lambda invocation = One structured metric record</strong></p>
     <p>
-      <strong>One Lambda invocation = One structured metric record</strong>
-    </p>
-    <p>
-      This eliminates log ambiguity and makes metrics deterministic.
+      This removes log ambiguity and ensures deterministic observability.
     </p>
   </div>
 
@@ -122,6 +156,16 @@
   </div>
 
   <div class="card">
+    <h2>What Makes This Important</h2>
+    <ul>
+      <li>Moves from log-based → event-based observability</li>
+      <li>Removes ambiguity in metric generation</li>
+      <li>Enables deterministic analytics</li>
+      <li>Aligns with real-world systems like Datadog & OpenTelemetry</li>
+    </ul>
+  </div>
+
+  <div class="card">
     <h2>Core Features</h2>
     <span class="tag">Event-driven ingestion</span>
     <span class="tag">Structured metrics</span>
@@ -133,20 +177,27 @@
   <div class="card">
     <h2>Tradeoffs</h2>
     <ul>
-      <li>No real-time streaming (Kinesis missing)</li>
-      <li>No dashboards (CLI-based only)</li>
-      <li>Limited scalability for large workloads</li>
+      <li>No real-time streaming layer (no Kinesis)</li>
+      <li>CLI instead of dashboards</li>
+      <li>Not optimized for high-scale production workloads</li>
     </ul>
   </div>
 
   <div class="card">
     <h2>Scaling Plan</h2>
     <ul>
-      <li>Add Kinesis for ingestion buffering</li>
-      <li>Add pre-aggregation layer</li>
-      <li>Split hot vs cold storage</li>
-      <li>Introduce dashboard (Grafana / QuickSight)</li>
+      <li>Add Kinesis ingestion buffer</li>
+      <li>Add pre-aggregation layer for metrics</li>
+      <li>Separate hot vs cold storage paths</li>
+      <li>Introduce visualization layer (Grafana / QuickSight)</li>
     </ul>
+  </div>
+
+  <div class="card">
+    <h2>CLI Usage</h2>
+    <pre>
+node cloudpulse-cli/index.js stats /aws/lambda/&lt;function-name&gt;
+    </pre>
   </div>
 
   <div class="card">
@@ -160,7 +211,7 @@
 </div>
 
 <footer>
-  CloudPulse — Observability & Metrics Pipeline • Built for system design learning
+  CloudPulse — Observability Engineering Project • Built for system design mastery
 </footer>
 
 </body>
