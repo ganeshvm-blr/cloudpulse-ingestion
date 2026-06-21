@@ -52,30 +52,13 @@
       border: 1px solid #1f2937;
     }
 
-    .tag {
-      display: inline-block;
-      background: #1e293b;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      margin: 4px;
-      color: #93c5fd;
-    }
-
-    pre {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 8px;
-      overflow-x: auto;
-      color: #a5b4fc;
-    }
-
     .diagram {
       font-family: monospace;
-      color: #a5b4fc;
       background: #0f172a;
       padding: 15px;
       border-radius: 8px;
+      color: #a5b4fc;
+      white-space: pre;
     }
 
     footer {
@@ -128,29 +111,9 @@
     <h2>Architecture</h2>
 
     <div class="diagram">
-┌────────────────────┐
-│  AWS Lambda        │
-└────────┬───────────┘
-         │ logs
-         ↓
-┌────────────────────┐
-│ CloudWatch Logs    │
-└────────┬───────────┘
-         │ stream
-         ↓
-┌────────────────────┐
-│ Ingestion Lambda   │
-└────────┬───────────┘
-         │ structured events
-         ↓
-┌────────────────────┐
-│ DynamoDB           │
-└────────┬───────────┘
-         │ query
-         ↓
-┌────────────────────┐
-│ CLI Analytics      │
-└────────────────────┘
+Lambda → CloudWatch Logs → Ingestion Lambda → DynamoDB → CLI Analytics Engine
+
+Each stage transforms raw logs into structured events and metrics
     </div>
   </div>
 
@@ -160,25 +123,15 @@
   </div>
 
   <div class="card">
-    <h2>Data Model (DynamoDB)</h2>
-    <pre>
-{
-  pk: "SERVICE#lambda-name",
-  sk: "TIME#timestamp#requestId",
-  durationMs,
-  billedMs,
-  memoryMb,
-  requestId,
-  timestamp
-}
-    </pre>
+    <h2>System Insight</h2>
+    <p>
+      Observability systems should model <strong>events, not logs</strong>.
+      Once data is structured at ingestion, all downstream analytics becomes deterministic.
+    </p>
   </div>
 
   <div class="card">
     <h2>Interview Explanation</h2>
-    <p>
-      CloudPulse is a simplified observability pipeline similar to Datadog-style systems.
-    </p>
     <ul>
       <li>Lambda generates logs</li>
       <li>CloudWatch streams logs</li>
@@ -186,7 +139,19 @@
       <li>DynamoDB stores events</li>
       <li>CLI computes percentiles</li>
     </ul>
-    <p><strong>Key idea:</strong> structured events > raw logs</p>
+  </div>
+
+  <div class="card">
+    <h2>30-Second Interview Pitch</h2>
+    <p>
+      CloudPulse is a lightweight observability system that converts AWS Lambda logs into structured events and computes latency percentiles (p50, p95, p99).
+    </p>
+    <p>
+      It uses an event-driven pipeline: ingestion normalizes logs, DynamoDB stores metrics, and a CLI computes analytics.
+    </p>
+    <p>
+      Key idea: one invocation = one metric record, removing log parsing complexity.
+    </p>
   </div>
 
   <div class="card">
@@ -202,32 +167,32 @@
   <div class="card">
     <h2>Resume Impact</h2>
     <ul>
-      <li>Built AWS serverless observability pipeline</li>
-      <li>Designed DynamoDB time-series schema</li>
-      <li>Built CLI analytics engine (p50/p95/p99)</li>
+      <li>AWS serverless observability pipeline</li>
+      <li>DynamoDB time-series data model</li>
+      <li>CLI-based metrics engine (p50/p95/p99)</li>
       <li>Eliminated log parsing via structured events</li>
     </ul>
   </div>
 
   <div class="card">
     <h2>CLI Usage</h2>
-    <pre>
-node cloudpulse-cli/index.js stats /aws/lambda/&lt;function-name&gt;
-    </pre>
+    <p><code>node cloudpulse-cli/index.js stats /aws/lambda/&lt;function&gt;</code></p>
   </div>
 
   <div class="card">
     <h2>Tech Stack</h2>
-    <span class="tag">AWS Lambda</span>
-    <span class="tag">CloudWatch Logs</span>
-    <span class="tag">DynamoDB</span>
-    <span class="tag">Node.js</span>
+    <ul>
+      <li>AWS Lambda</li>
+      <li>CloudWatch Logs</li>
+      <li>DynamoDB</li>
+      <li>Node.js</li>
+    </ul>
   </div>
 
 </div>
 
 <footer>
-  CloudPulse — Observability Engineering Project
+  Built to demonstrate distributed systems thinking, event-driven architecture, and AWS-native design patterns.
 </footer>
 
 </body>
