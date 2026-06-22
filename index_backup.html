@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CloudPulse — AWS Observability System</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+      background: #0b0f19;
+      color: #e6e6e6;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 80px 40px 40px;
+      background: linear-gradient(135deg, #111827, #0b0f19);
+      border-bottom: 1px solid #1f2937;
+    }
+
+    h1 {
+      font-size: 46px;
+      margin: 0;
+      color: #7dd3fc;
+    }
+
+    h2 {
+      color: #93c5fd;
+      margin-top: 40px;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      max-width: 900px;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .container {
+      padding: 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: #111827;
+      padding: 22px;
+      border-radius: 12px;
+      margin-top: 18px;
+      border: 1px solid #1f2937;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #1e293b;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin: 4px;
+      color: #93c5fd;
+    }
+
+    pre {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      color: #a5b4fc;
+    }
+
+    .diagram {
+      font-family: monospace;
+      color: #a5b4fc;
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px;
+      color: #64748b;
+      border-top: 1px solid #1f2937;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>CloudPulse</h1>
+  <div class="subtitle">
+    Lightweight AWS-native observability system that transforms Lambda execution logs into structured metrics and computes latency percentiles (p50, p95, p99).
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Problem</h2>
+    <p>
+      AWS Lambda logs are fragmented and unstructured, making it difficult to compute reliable metrics like latency distributions.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Solution</h2>
+    <p>
+      CloudPulse converts every Lambda invocation into a structured event for deterministic analytics.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Why This Project Stands Out</h2>
+    <ul>
+      <li>Event-driven observability system design</li>
+      <li>Real-world AWS serverless architecture</li>
+      <li>Time-series data modeling in DynamoDB</li>
+      <li>Separation of ingestion and analytics layers</li>
+      <li>Deterministic metrics instead of log parsing</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Architecture</h2>
+
+    <div class="diagram">
+┌────────────────────┐
+│  AWS Lambda        │
+└────────┬───────────┘
+         │ logs
+         ↓
+┌────────────────────┐
+│ CloudWatch Logs    │
+└────────┬───────────┘
+         │ stream
+         ↓
+┌────────────────────┐
+│ Ingestion Lambda   │
+└────────┬───────────┘
+         │ structured events
+         ↓
+┌────────────────────┐
+│ DynamoDB           │
+└────────┬───────────┘
+         │ query
+         ↓
+┌────────────────────┐
+│ CLI Analytics      │
+└────────────────────┘
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Key Design Principle</h2>
+    <p><strong>One Lambda invocation = One structured metric record</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>Data Model (DynamoDB)</h2>
+    <pre>
+{
+  pk: "SERVICE#lambda-name",
+  sk: "TIME#timestamp#requestId",
+  durationMs,
+  billedMs,
+  memoryMb,
+  requestId,
+  timestamp
+}
+    </pre>
+  </div>
+
+  <div class="card">
+    <h2>Interview Explanation</h2>
+    <p>
+      CloudPulse is a simplified observability pipeline similar to Datadog-style systems.
+    </p>
+    <ul>
+      <li>Lambda generates logs</li>
+      <li>CloudWatch streams logs</li>
+      <li>Ingestion Lambda transforms data</li>
+      <li>DynamoDB stores events</li>
+      <li>CLI computes percentiles</li>
+    </ul>
+    <p><strong>Key idea:</strong> structured events > raw logs</p>
+  </div>
+
+  <div class="card">
+    <h2>Scaling Plan</h2>
+    <ul>
+      <li>Add Kinesis ingestion buffer</li>
+      <li>Add pre-aggregation layer</li>
+      <li>Split hot vs cold storage</li>
+      <li>Add dashboard layer (Grafana / QuickSight)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Resume Impact</h2>
+    <ul>
+      <li>Built AWS serverless observability pipeline</li>
+      <li>Designed DynamoDB time-series schema</li>
+      <li>Built CLI analytics engine (p50/p95/p99)</li>
+      <li>Eliminated log parsing via structured events</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>CLI Usage</h2>
+    <pre>
+node cloudpulse-cli/index.js stats /aws/lambda/&lt;function-name&gt;
+    </pre>
+  </div>
+
+  <div class="card">
+    <h2>Tech Stack</h2>
+    <span class="tag">AWS Lambda</span>
+    <span class="tag">CloudWatch Logs</span>
+    <span class="tag">DynamoDB</span>
+    <span class="tag">Node.js</span>
+  </div>
+
+</div>
+
+<footer>
+  CloudPulse — Observability Engineering Project
+</footer>
+
+</body>
+</html>
