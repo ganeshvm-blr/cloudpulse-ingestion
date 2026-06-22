@@ -32,6 +32,7 @@ This eliminates log parsing and ensures consistent analytics.
 
 ---
 
+```md id="fix2"
 ## 📊 Data Model (DynamoDB)
 
 ```json
